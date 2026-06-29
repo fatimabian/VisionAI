@@ -1,9 +1,11 @@
+import React from "react";
 import {
   View,
- Image,
+  Image,
   TouchableOpacity,
   Text,
   StyleSheet,
+  Alert,
   useWindowDimensions,
 } from "react-native";
 
@@ -13,7 +15,6 @@ export default function PreviewScreen({ route, navigation }) {
   const { photoUri } = route.params;
 
   const { width } = useWindowDimensions();
-
   const isTablet = width >= 768;
 
   async function goAnalyze(promptKey) {
@@ -21,38 +22,38 @@ export default function PreviewScreen({ route, navigation }) {
       const base64Image = await imageToBase64(photoUri);
 
       navigation.navigate("Result", {
+        photoUri,
         base64Image,
         promptKey,
       });
     } catch (error) {
       console.log(error);
+      Alert.alert("Error", "Unable to analyze image.");
     }
   }
 
   return (
     <View style={styles.container}>
-      <Image
-        source={{ uri: photoUri }}
-        style={[
-          styles.preview,
-          {
-            maxWidth: isTablet ? 600 : "100%",
-          },
-        ]}
-      />
+      {/* Preview Image */}
+      <View style={styles.imageContainer}>
+        <Image
+          source={{ uri: photoUri }}
+          style={[
+            styles.preview,
+            isTablet && styles.previewTablet,
+          ]}
+        />
+      </View>
 
-      <View style={styles.actionRow}>
+      {/* Buttons */}
+      <View style={styles.bottomContainer}>
         <TouchableOpacity
           style={styles.retakeButton}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.buttonText}>
-            Retake
-          </Text>
+          <Text style={styles.buttonText}>Retake</Text>
         </TouchableOpacity>
-      </View>
 
-      <View style={styles.personaContainer}>
         <TouchableOpacity
           style={styles.academicButton}
           onPress={() => goAnalyze("academic")}
@@ -88,58 +89,58 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#000",
-    justifyContent: "space-between",
-    paddingVertical: 20,
+  },
+
+  imageContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
   },
 
   preview: {
-    flex: 1,
+    width: "100%",
+    height: "100%",
     resizeMode: "contain",
-    alignSelf: "center",
   },
 
-  actionRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginVertical: 10,
+  previewTablet: {
+    width: 600,
+  },
+
+  bottomContainer: {
+    padding: 20,
+    gap: 12,
   },
 
   retakeButton: {
-    backgroundColor: "#5A6472",
-    paddingVertical: 14,
-    paddingHorizontal: 30,
-    borderRadius: 8,
-  },
-
-  personaContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 20,
+    backgroundColor: "#6B7280",
+    padding: 15,
+    borderRadius: 10,
   },
 
   academicButton: {
-    backgroundColor: "#2E5BBA",
+    backgroundColor: "#2563EB",
     padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
+    borderRadius: 10,
   },
 
   safetyButton: {
-    backgroundColor: "#D97706",
+    backgroundColor: "#EA580C",
     padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
+    borderRadius: 10,
   },
 
   inventoryButton: {
-    backgroundColor: "#5B3FA3",
+    backgroundColor: "#7C3AED",
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 10,
   },
 
   buttonText: {
     color: "#fff",
-    fontWeight: "bold",
     textAlign: "center",
-    fontSize: 15,
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });

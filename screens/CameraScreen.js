@@ -50,7 +50,7 @@ export default function CameraScreen({ navigation }) {
     if (!cameraRef.current) return;
 
     const result = await cameraRef.current.takePictureAsync({
-      quality: 0.7,
+      quality: 0.3,
     });
 
     navigation.navigate("Preview", {

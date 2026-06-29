@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import {
   View,
   Text,
+  Image,
   ActivityIndicator,
   StyleSheet,
   ScrollView,
@@ -13,7 +14,7 @@ import {
 } from "../lib/gemini";
 
 export default function ResultScreen({ route }) {
-  const { base64Image, promptKey } = route.params;
+  const { photoUri, base64Image, promptKey } = route.params;
 
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -94,9 +95,14 @@ export default function ResultScreen({ route }) {
         paddingBottom: 30,
       }}
     >
-      <Text style={styles.title}>
-        AI Analysis Result
-      </Text>
+     <Text style={styles.title}>
+  AI Analysis Result
+</Text>
+
+<Image
+  source={{ uri: photoUri }}
+  style={styles.resultImage}
+/>
 
       <Text style={styles.sectionTitle}>
         Objects
@@ -112,9 +118,15 @@ export default function ResultScreen({ route }) {
           </Text>
         ))}
 
-      <Text style={styles.sectionTitle}>
-        Context
-      </Text>
+      <View style={styles.card}>
+  <Text style={styles.cardTitle}>Objects</Text>
+
+  {analysis.objects?.map((item, index) => (
+    <Text key={index} style={styles.cardText}>
+      {item}
+    </Text>
+  ))}
+</View>
 
       <Text style={styles.bodyText}>
         {analysis.context}
@@ -192,4 +204,36 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#2B2F38",
   },
+
+  resultImage: {
+  width: "100%",
+  height: 220,
+  resizeMode: "contain",
+  borderRadius: 10,
+  marginBottom: 20,
+},
+
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#D1D5DB",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 2,
+  },
+
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#1F2937",
+    marginBottom: 10,
+  },
+
+  cardText: {
+    fontSize: 16,
+    color: "#374151",
+    lineHeight: 24,
+  },
 });
+
