@@ -41,10 +41,8 @@ async function takePicture() {
   });
 
   navigation.navigate('Preview', {
-    photo: result.uri,
+    photoUri: result.uri,
   });
-
-  console.log(result.uri);
 }
 
   return (

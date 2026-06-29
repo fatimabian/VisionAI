@@ -1,18 +1,27 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Image, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 export default function PreviewScreen({ route, navigation }) {
-  const { photo } = route.params;
+  const { photoUri } = route.params;
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: photo }} style={styles.image} />
+      <Image source={{ uri: photoUri }} style={styles.preview} />
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.buttonText}>Retake</Text>
-      </TouchableOpacity>
+      <View style={styles.actionRow}>
+        <TouchableOpacity
+          style={styles.retakeButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.buttonText}>Retake</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.analyzeButton}
+          onPress={() => navigation.navigate('Result', { photoUri })}
+        >
+          <Text style={styles.buttonText}>Analyze</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -21,21 +30,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  image: {
-    width: '100%',
-    height: '80%',
+  preview: {
+    flex: 1,
     resizeMode: 'contain',
   },
-  button: {
-    position: 'absolute',
-    bottom: 40,
-    backgroundColor: '#2E5BBA',
-    paddingVertical: 14,
-    paddingHorizontal: 30,
-    borderRadius: 30,
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 20,
+  },
+  retakeButton: {
+    backgroundColor: '#5A6472',
+    padding: 14,
+    borderRadius: 8,
+  },
+  analyzeButton: {
+    backgroundColor: '#5B3FA3',
+    padding: 14,
+    borderRadius: 8,
   },
   buttonText: {
     color: '#fff',
