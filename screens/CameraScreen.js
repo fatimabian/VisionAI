@@ -2,15 +2,19 @@ import { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
-export default function CameraScreen() {
+export default function CameraScreen({ navigation }) {
   const [permission, requestPermission] = useCameraPermissions();
 
   const cameraRef = useRef(null);
   const [photo, setPhoto] = useState(null);
 
-  if (!permission) {
-    return <View style={styles.container} />;
-  }
+if (!permission) {
+  return (
+    <View style={styles.permissionContainer}>
+      <Text>Loading camera...</Text>
+    </View>
+  );
+}
 
   if (!permission.granted) {
     return (
@@ -36,10 +40,12 @@ async function takePicture() {
     quality: 0.7,
   });
 
-  setPhoto(result.uri);
+  navigation.navigate('Preview', {
+    photo: result.uri,
+  });
 
   console.log(result.uri);
-} 
+}
 
   return (
   <View style={styles.container}>
@@ -47,6 +53,7 @@ async function takePicture() {
       ref={cameraRef}
       style={styles.camera}
       facing="back"
+      onCameraReady={() => console.log("Camera ready")}
     />
 
     <TouchableOpacity
