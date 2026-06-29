@@ -1,8 +1,12 @@
-import { useCameraPermissions } from "expo-camera";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useState, useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 
 export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
+
+  const cameraRef = useRef(null);
+  const [photo, setPhoto] = useState(null);
 
   if (!permission) {
     return <View style={styles.container} />;
@@ -25,32 +29,84 @@ export default function CameraScreen() {
     );
   }
 
-  return <View style={styles.container} />;
+async function takePicture() {
+  if (!cameraRef.current) return;
+
+  const result = await cameraRef.current.takePictureAsync({
+    quality: 0.7,
+  });
+
+  setPhoto(result.uri);
+
+  console.log(result.uri);
+} 
+
+  return (
+  <View style={styles.container}>
+    <CameraView
+      ref={cameraRef}
+      style={styles.camera}
+      facing="back"
+    />
+
+    <TouchableOpacity
+      style={styles.captureButton}
+      onPress={takePicture}
+    >
+      <Text style={styles.captureButtonText}>
+        Capture
+      </Text>
+    </TouchableOpacity>
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
+  camera: {
+    flex: 1,
+  },
+
+  captureButton: {
+    position: 'absolute',
+    bottom: 40,
+    alignSelf: 'center',
+    backgroundColor: '#2E5BBA',
+    paddingVertical: 14,
+    paddingHorizontal: 36,
+    borderRadius: 30,
+  },
+
+  captureButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+
   permissionContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
+
   permissionText: {
-    fontSize: 18,
-    textAlign: "center",
-    marginBottom: 20,
+    textAlign: 'center',
+    marginBottom: 16,
+    fontSize: 16,
   },
+
   permissionButton: {
-    backgroundColor: "#4CAF50",
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 10,
+    backgroundColor: '#2E5BBA',
+    padding: 12,
+    borderRadius: 8,
   },
+
   permissionButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
